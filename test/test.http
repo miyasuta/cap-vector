@@ -1,0 +1,14 @@
+@server=http://localhost:4004
+
+###
+GET {{server}}/odata/v4/embedding-storage/storeEmbeddings()
+
+
+###
+GET {{server}}/odata/v4/embedding-storage/deleteEmbeddings()
+
+###
+GET {{server}}/odata/v4/roadshow/getRagResponse()
+
+###
+GET {{server}}/odata/v4/roadshow/executeSimilaritySearch()

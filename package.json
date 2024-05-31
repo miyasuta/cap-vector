@@ -1,0 +1,32 @@
+{
+  "name": "cap-vector",
+  "version": "1.0.0",
+  "description": "A simple CAP project.",
+  "repository": "<Add your repository here>",
+  "license": "UNLICENSED",
+  "private": true,
+  "dependencies": {
+    "@sap/cds": "^7",
+    "@sap/cds-hana": "^2",
+    "express": "^4",
+    "langchain": "^0.2.3",
+    "openai": "^4.47.2"
+  },
+  "devDependencies": {
+    "@cap-js/sqlite": "^1",
+    "@sap/cds-dk": "^7",
+    "@sap/eslint-plugin-cds": "^3.0.3",
+    "eslint": "^9.3.0"
+  },
+  "scripts": {
+    "start": "cds-serve",
+    "build": "mbt build -t gen --mtar mta.tar",
+    "deploy": "cf deploy gen/mta.tar"
+  },
+  "cds": {
+    "requires": {
+      "auth": "dummy",
+      "db": "hana"
+    }
+  }
+}
