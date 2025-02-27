@@ -47,7 +47,7 @@ module.exports = class EmbeddingStorage extends cds.ApplicationService {
                 const entry = {
                     "text_chunk": chunk.pageContent,
                     "metadata_column": loader.filePath,
-                    "embedding": array2VectorBuffer(embedding)
+                    "embedding": JSON.stringify(embedding)
                 }
                 console.log(entry)
                 textChunkEntries.push(entry)

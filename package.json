@@ -6,15 +6,15 @@
   "license": "UNLICENSED",
   "private": true,
   "dependencies": {
-    "@sap/cds": "^7",
-    "@sap/cds-hana": "^2",
+    "@cap-js/hana": "^1.6.1",
+    "@sap/cds": "^8",
     "express": "^4",
-    "langchain": "^0.2.3",
+    "langchain": "^0.3.19",
     "openai": "^4.47.2"
   },
   "devDependencies": {
     "@cap-js/sqlite": "^1",
-    "@sap/cds-dk": "^7",
+    "@sap/cds-dk": "^8",
     "@sap/eslint-plugin-cds": "^3.0.3",
     "eslint": "^9.3.0"
   },
