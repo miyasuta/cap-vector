@@ -43,11 +43,14 @@ module.exports = class EmbeddingStorage extends cds.ApplicationService {
             const openai = new OpenAIUtil()
             for (const chunk of textChunks) {
                 console.log(chunk.pageContent)
-                const embedding = await openai.getEmbedding(chunk.pageContent)
+                // const embedding = await openai.getEmbedding(chunk.pageContent)
+                //第一引数はテーブルにある項目でないとダメ
+                // const embedding = await SELECT .one .from(DocumentChunk)
+                                        // .columns `vector_embedding(chunk.pageContent, 'DOCUMENT', 'SAP_NEB.20240715') as embedding`        
                 const entry = {
                     "text_chunk": chunk.pageContent,
                     "metadata_column": loader.filePath,
-                    "embedding": JSON.stringify(embedding)
+                    // "embedding": JSON.stringify(embedding)
                 }
                 console.log(entry)
                 textChunkEntries.push(entry)
@@ -55,9 +58,17 @@ module.exports = class EmbeddingStorage extends cds.ApplicationService {
 
             //3. store embeddings into db
             console.log("Inserting text chunks with embeddings into db.")
+            //embeddingなしで入れる
             const insertStatus = await INSERT.into(DocumentChunk).entries(textChunkEntries)
             if (!insertStatus) {
                 throw new Error("Insertion of text chunks into db failed!")
+            }
+
+            // embeddingを設定
+            const entries = await SELECT.from(DocumentChunk)
+                           .columns `vector_embedding(text_chunk, 'DOCUMENT', 'SAP_NEB.20240715') as embedding`
+            for (const entry of entries) {
+                await UPDATE(DocumentChunk).set({ embedding: entry.embedding }).where({ ID: entry.ID })
             }
             return `Embeddings stored successfully to db.`
 
