@@ -44,13 +44,14 @@ module.exports = class EmbeddingStorage extends cds.ApplicationService {
             for (const chunk of textChunks) {
                 console.log(chunk.pageContent)
                 // const embedding = await openai.getEmbedding(chunk.pageContent)
-                //第一引数はテーブルにある項目でないとダメ
-                // const embedding = await SELECT .one .from(DocumentChunk)
-                                        // .columns `vector_embedding(chunk.pageContent, 'DOCUMENT', 'SAP_NEB.20240715') as embedding`        
+                // const embedding = await SELECT .from(DocumentChunk)
+                //                         .columns `vector_embedding(${chunk.pageContent}, 'DOCUMENT', 'SAP_NEB.20240715') as embedding`
+                //                         .limit(1)      
+                // console.log("embedding: ", embedding);
                 const entry = {
                     "text_chunk": chunk.pageContent,
                     "metadata_column": loader.filePath,
-                    // "embedding": JSON.stringify(embedding)
+                    //"embedding": JSON.stringify(embedding)
                 }
                 console.log(entry)
                 textChunkEntries.push(entry)
@@ -66,10 +67,13 @@ module.exports = class EmbeddingStorage extends cds.ApplicationService {
 
             // embeddingを設定
             const entries = await SELECT.from(DocumentChunk)
-                           .columns `vector_embedding(text_chunk, 'DOCUMENT', 'SAP_NEB.20240715') as embedding`
+                             .columns `ID, vector_embedding(text_chunk, 'DOCUMENT', 'SAP_NEB.20240715') as embedding`
             for (const entry of entries) {
-                await UPDATE(DocumentChunk).set({ embedding: entry.embedding }).where({ ID: entry.ID })
-            }
+                // console.log("entry:", entry);
+                console.log("ID:", entry.ID);
+                console.log("embedding:", entry.embedding);
+                await UPDATE(DocumentChunk).set({ embedding: JSON.stringify(entry.embedding) }).where({ ID: entry.ID })
+            }           
             return `Embeddings stored successfully to db.`
 
         })

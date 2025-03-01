@@ -8,12 +8,14 @@ module.exports = class RoadshowService extends cds.ApplicationService {
     init() {
         this.on('getRagResponse', async () => {
             //1. get embedding for input
-            const openai = new OpenAIUtil()
-            const embedding = await openai.getEmbedding(userQuery)
-
-            //2. retrieve relevant contents
+            // const openai = new OpenAIUtil()
+            // const embedding = await openai.getEmbedding(userQuery)
             const db = await cds.connect.to('db')
             const { DocumentChunk } = db.entities;
+            const embedding = await SELECT .one .from(DocumentChunk)
+                                    .columns `vector_embedding(${userQuery}, 'DOCUMENT', 'SAP_NEB.20240715') as embedding`
+            console.log("embedding: ", embedding);
+            //2. retrieve relevant contents
             const contents = await SELECT.from(DocumentChunk)
                                 .limit(3)
                                 .where`cosine_similarity(embedding, to_real_vector(${JSON.stringify(embedding)})) > 0.7`
@@ -36,12 +38,13 @@ module.exports = class RoadshowService extends cds.ApplicationService {
 
         this.on('executeSimilaritySearch', async () => {
             //1. get embedding for input
-            const openai = new OpenAIUtil()
-            const embedding = await openai.getEmbedding(userQuery)
-
-            //2. retrieve relevant contents
+            // const openai = new OpenAIUtil()
+            // const embedding = await openai.getEmbedding(userQuery)
             const db = await cds.connect.to('db')
             const { DocumentChunk } = db.entities;
+            const embedding = await SELECT .one .from(DocumentChunk)
+                                    .columns `vector_embedding(${userQuery}, 'DOCUMENT', 'SAP_NEB.20240715') as embedding`
+            //2. retrieve relevant contents
             const contents = await SELECT.from(DocumentChunk)
                                 .columns `text_chunk, 
                                           cosine_similarity(embedding, to_real_vector(${JSON.stringify(embedding)})) as cosine_similarity,
